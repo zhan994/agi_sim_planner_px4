@@ -25,7 +25,7 @@ if(ENABLE_CUDA)
 
   SET(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
-  find_package(OpenCV REQUIRED)
+  find_package(OpenCV 4 REQUIRED)
   find_package(Eigen3 REQUIRED)
   find_package(Boost REQUIRED COMPONENTS system filesystem)
 
