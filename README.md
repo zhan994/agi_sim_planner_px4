@@ -7,6 +7,7 @@
 - ros1 noetic
 - [px4_firmware](https://docs.px4.io/main/en/ros/mavros_installation.html)
 - QGC
+- nlopt
 
 
 
@@ -26,11 +27,19 @@ cp worlds/* ~/work/px4_firmware/Tools/sitl_gazebo/worlds/
 cp -r models/* ~/work/px4_firmware/Tools/sitl_gazebo/models/ 
 ```
 
-Move QGC to `px4_firmware` folder, and run scipts.
+Move `QGC` to `px4_firmware` folder, and run scipts.
 
 ```bash
-source scripts/env.sh
+source scripts/px4_env.sh
 ./scripts/qgc.sh
 roslaunch px4 demo1.launch
 ```
 
+Build `nlopt`.
+
+```bash
+cd third/nlopt
+mkdir build && cmake ..
+make
+sudo make install
+```
