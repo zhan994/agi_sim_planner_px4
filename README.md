@@ -1,6 +1,6 @@
-# agi_sim_px4_ros1
+# agi_sim_planner_px4
 
-**A repo. which used to check autopilot algorithms using PX4-Gazebo simulation tools.**
+**A repo. which used to check PnC algorithms using PX4-Gazebo simulation tools.**
 
 ## Prerequisites
 
