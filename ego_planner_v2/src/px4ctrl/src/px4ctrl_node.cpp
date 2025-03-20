@@ -89,9 +89,9 @@ int main(int argc, char *argv[]) {
     server.setCallback(
         f); //为服务器设置回调函数，
             //节点程序运行时会调用一次回调函数来输出当前的参数配置情况
-    ROS_WARN("PX4CTRL] Remote controller disabled, be careful!");
+    ROS_WARN("[PX4CTRL] Remote controller disabled, be careful!");
   } else {
-    ROS_INFO("PX4CTRL] Waiting for RC");
+    ROS_INFO("[PX4CTRL] Waiting for RC");
     while (ros::ok()) {
       ros::spinOnce();
       if (fsm.rc_is_received(ros::Time::now())) {
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
   ros::Rate r(param.ctrl_freq_max);
   while (ros::ok()) {
-    ROS_INFO_ONCE("PX4CTRL] Is OK!");
+    ROS_INFO_ONCE("[PX4CTRL] Is OK!");
     r.sleep();
     ros::spinOnce();
     fsm.process(); // We DO NOT rely on feedback as trigger, since there is no

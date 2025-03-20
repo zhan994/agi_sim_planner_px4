@@ -35,6 +35,8 @@ source scripts/px4_env.sh
 roslaunch px4 demo1.launch
 ```
 
+## Fast-Planner
+
 Build `nlopt`.
 
 ```bash
@@ -42,4 +44,18 @@ cd third/nlopt
 mkdir build && cmake ..
 make
 sudo make install
+
+cd fast_planner
+catkin_make
+source devel/setup.bash
+./fast.sh
+```
+
+## EGO-Planner-V2
+
+```bash
+cd ego_planner_v2
+catkin_make
+source devel/setup.bash
+./ego.sh
 ```
