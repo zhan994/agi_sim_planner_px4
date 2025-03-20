@@ -22,15 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 find_package(Eigen3 REQUIRED) 
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
- generate_dynamic_reconfigure_options(
-   cfg/fake_rc.cfg
- )
+generate_dynamic_reconfigure_options(cfg/fake_rc.cfg)
 
 catkin_package(
-   INCLUDE_DIRS include
-   LIBRARIES px4ctrl
-   CATKIN_DEPENDS dynamic_reconfigure quadrotor_msgs roscpp rospy geometry_msgs sensor_msgs mavros_msgs
-   DEPENDS Eigen3
+  INCLUDE_DIRS include
+  LIBRARIES px4ctrl
+  CATKIN_DEPENDS dynamic_reconfigure quadrotor_msgs roscpp rospy geometry_msgs sensor_msgs mavros_msgs
+  DEPENDS Eigen3
 )
 
 include_directories(
@@ -40,22 +38,20 @@ include_directories(
 )
 
 set(LIBS
-${catkin_LIBRARIES}
-${EIGEN3_LIBS}
+  ${catkin_LIBRARIES}
+  ${EIGEN3_LIBS}
 )
 
 add_executable(px4ctrl_node 
-  src/PX4Ctrlnode.cpp
-  src/PX4Ctrlfsm.cpp
-  src/PX4Ctrlparam.cpp
+  src/px4ctrl_node.cpp
+  src/px4ctrl_fsm.cpp
+  src/px4ctrl_param.cpp
   src/controller.cpp
-  src/ROScallback.cpp
+  src/ros_callback.cpp
 )
 
 
-target_link_libraries(px4ctrl_node
-  ${LIBS}
-)
+target_link_libraries(px4ctrl_node ${LIBS})
 
 #catkin_install_python(PROGRAMS thrust_calibrate_scrips/thrust_calibrate.py
 #  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

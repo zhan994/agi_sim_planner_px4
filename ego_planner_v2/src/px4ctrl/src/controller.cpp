@@ -47,8 +47,8 @@ LinearControl::calculateControl(const Desired_State_t &des,
   roll = (des_acc(0) * sin - des_acc(1) * cos) / param_.gra;
   pitch = (des_acc(0) * cos + des_acc(1) * sin) / param_.gra;
   // yaw = fromQuaternion2yaw(des.q);
-  yaw_imu = fromQuaternion2yaw(
-      imu.q); //根据四元数计算出欧拉角，ros的odom消息机制为ZYX，无人机的是ZXY
+  //根据四元数计算出欧拉角，ros的odom消息机制为ZYX，无人机的是ZXY
+  yaw_imu = fromQuaternion2yaw(imu.q);
   // Eigen::Quaterniond q = Eigen::AngleAxisd(yaw,Eigen::Vector3d::UnitZ())
   //   * Eigen::AngleAxisd(roll,Eigen::Vector3d::UnitX())
   //   * Eigen::AngleAxisd(pitch,Eigen::Vector3d::UnitY());

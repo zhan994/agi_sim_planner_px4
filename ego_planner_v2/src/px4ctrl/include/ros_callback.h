@@ -18,7 +18,7 @@
 #include "px4ctrl/fake_rcConfig.h"
 #include <dynamic_reconfigure/server.h>
 
-#include "PX4Ctrlparam.h"
+#include "px4ctrl_param.h"
 
 class RC_Data_t {
 public:
@@ -54,6 +54,8 @@ public:
   bool is_received(const ros::Time &now_time);
 };
 
+
+// api: dynamic_reconfigure
 class Dynamic_Data_t {
 public:
   bool is_command_mode;
@@ -121,6 +123,7 @@ public:
   void feed(mavros_msgs::ExtendedStateConstPtr pMsg);
 };
 
+// api: quadrotor_msgs::PositionCommand
 class Command_Data_t {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -155,6 +158,7 @@ public:
   void feed(sensor_msgs::BatteryStateConstPtr pMsg);
 };
 */
+
 class Takeoff_Land_Data_t {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
