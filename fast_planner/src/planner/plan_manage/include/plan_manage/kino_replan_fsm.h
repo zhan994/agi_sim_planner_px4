@@ -1,27 +1,26 @@
 /**
-* This file is part of Fast-Planner.
-*
-* Copyright 2019 Boyu Zhou, Aerial Robotics Group, Hong Kong University of Science and Technology, <uav.ust.hk>
-* Developed by Boyu Zhou <bzhouai at connect dot ust dot hk>, <uv dot boyuzhou at gmail dot com>
-* for more information see <https://github.com/HKUST-Aerial-Robotics/Fast-Planner>.
-* If you use this code, please cite the respective publications as
-* listed on the above website.
-*
-* Fast-Planner is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* Fast-Planner is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with Fast-Planner. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
+ * This file is part of Fast-Planner.
+ *
+ * Copyright 2019 Boyu Zhou, Aerial Robotics Group, Hong Kong University of
+ * Science and Technology, <uav.ust.hk> Developed by Boyu Zhou <bzhouai at
+ * connect dot ust dot hk>, <uv dot boyuzhou at gmail dot com> for more
+ * information see <https://github.com/HKUST-Aerial-Robotics/Fast-Planner>. If
+ * you use this code, please cite the respective publications as listed on the
+ * above website.
+ *
+ * Fast-Planner is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fast-Planner is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Fast-Planner. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef _KINO_REPLAN_FSM_H_
 #define _KINO_REPLAN_FSM_H_
@@ -56,24 +55,25 @@ private:
   ros::NodeHandle nh_;
 
 public:
-  Test(const int& v) {
-    test_ = v;
-  }
-  Test(ros::NodeHandle& node) {
-    nh_ = node;
-  }
-  ~Test() {
-  }
-  void print() {
-    std::cout << "test: " << test_ << std::endl;
-  }
+  Test(const int &v) { test_ = v; }
+  Test(ros::NodeHandle &node) { nh_ = node; }
+  ~Test() {}
+  void print() { std::cout << "test: " << test_ << std::endl; }
 };
 
 class KinoReplanFSM {
 
 private:
   /* ---------- flag ---------- */
-  enum FSM_EXEC_STATE { INIT, WAIT_TARGET, GEN_NEW_TRAJ, REPLAN_TRAJ, EXEC_TRAJ, REPLAN_NEW };
+  // api: 状态枚举
+  enum FSM_EXEC_STATE {
+    INIT,
+    WAIT_TARGET,
+    GEN_NEW_TRAJ,
+    REPLAN_TRAJ,
+    EXEC_TRAJ,
+    REPLAN_NEW
+  };
   enum TARGET_TYPE { MANUAL_TARGET = 1, PRESET_TARGET = 2, REFENCE_PATH = 3 };
 
   /* planning utils */
@@ -81,7 +81,7 @@ private:
   PlanningVisualization::Ptr visualization_;
 
   /* parameters */
-  int target_type_;  // 1 mannual select, 2 hard code
+  int target_type_; // 1 mannual select, 2 hard code
   double no_replan_thresh_, replan_thresh_;
   double waypoints_[50][3];
   int waypoint_num_;
@@ -90,11 +90,11 @@ private:
   bool trigger_, have_target_, have_odom_;
   FSM_EXEC_STATE exec_state_;
 
-  Eigen::Vector3d odom_pos_, odom_vel_;  // odometry state
+  Eigen::Vector3d odom_pos_, odom_vel_; // odometry state
   Eigen::Quaterniond odom_orient_;
 
-  Eigen::Vector3d start_pt_, start_vel_, start_acc_, start_yaw_;  // start state
-  Eigen::Vector3d end_pt_, end_vel_;                              // target state
+  Eigen::Vector3d start_pt_, start_vel_, start_acc_, start_yaw_; // start state
+  Eigen::Vector3d end_pt_, end_vel_;                             // target state
   int current_wp_;
 
   /* ROS utils */
@@ -104,29 +104,32 @@ private:
   ros::Publisher replan_pub_, new_pub_, bspline_pub_;
 
   /* helper functions */
-  bool callKinodynamicReplan();        // front-end and back-end method
-  bool callTopologicalTraj(int step);  // topo path guided gradient-based
-                                       // optimization; 1: new, 2: replan
+  bool callKinodynamicReplan();       // front-end and back-end method
+  bool callTopologicalTraj(int step); // topo path guided gradient-based
+                                      // optimization; 1: new, 2: replan
   void changeFSMExecState(FSM_EXEC_STATE new_state, string pos_call);
   void printFSMExecState();
 
   /* ROS functions */
-  void execFSMCallback(const ros::TimerEvent& e);
-  void checkCollisionCallback(const ros::TimerEvent& e);
-  void waypointCallback(const nav_msgs::PathConstPtr& msg);
-  void odometryCallback(const nav_msgs::OdometryConstPtr& msg);
+  // api: 系统执行状态机
+  void execFSMCallback(const ros::TimerEvent &e);
+  // api: 检查碰撞cbk
+  void checkCollisionCallback(const ros::TimerEvent &e);
+  // api: 飞行航点cbk
+  void waypointCallback(const nav_msgs::PathConstPtr &msg);
+  // api: odom cbk
+  void odometryCallback(const nav_msgs::OdometryConstPtr &msg);
 
 public:
-  KinoReplanFSM(/* args */) {
-  }
-  ~KinoReplanFSM() {
-  }
+  KinoReplanFSM(/* args */) {}
+  ~KinoReplanFSM() {}
 
-  void init(ros::NodeHandle& nh);
+  // api: fsm节点初始化
+  void init(ros::NodeHandle &nh);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-}  // namespace fast_planner
+} // namespace fast_planner
 
 #endif
