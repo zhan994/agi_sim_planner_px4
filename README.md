@@ -16,7 +16,7 @@
 Copy data in folder `sim_tools` to **px4_firmware**.
 
 ```bash
-git clone git@github.com:zhan994/agi_sim_px4_ros1.git
+git clone git@github.com:zhan994/agi_sim_planner_px4.git
 
 cd agi_sim_px4_ros1/sim_tools
 # 添加launch文件
