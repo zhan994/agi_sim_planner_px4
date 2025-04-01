@@ -65,7 +65,7 @@ class KinoReplanFSM {
 
 private:
   /* ---------- flag ---------- */
-  // api: 状态枚举
+  // api: 状态
   enum FSM_EXEC_STATE {
     INIT,
     WAIT_TARGET,

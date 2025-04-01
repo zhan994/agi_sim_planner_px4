@@ -89,7 +89,7 @@ void KinoReplanFSM::waypointCallback(const nav_msgs::PathConstPtr &msg) {
     current_wp_ = (current_wp_ + 1) % waypoint_num_;
   }
 
-  // step: 3 绘制目标点，定义目标点速度状态
+  // step: 3 绘制目标点，定义目标点速度状态，目标点状态置true
   visualization_->drawGoal(end_pt_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
   end_vel_.setZero();
   have_target_ = true;
@@ -138,10 +138,13 @@ void KinoReplanFSM::printFSMExecState() {
 }
 
 void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
+  // step: 定时打印当前状态
   static int fsm_num = 0;
   fsm_num++;
   if (fsm_num == 100) {
     printFSMExecState();
+
+    // step: 检查里程计和终点状态
     if (!have_odom_)
       cout << "no odom." << endl;
     if (!trigger_)
@@ -151,26 +154,32 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
 
   switch (exec_state_) {
   case INIT: {
+    // step: 1 检查里程计和触发
     if (!have_odom_) {
       return;
     }
     if (!trigger_) {
       return;
     }
+
+    // step: 2 修改状态为 WAIT_TARGET
     changeFSMExecState(WAIT_TARGET, "FSM");
     break;
   }
 
   case WAIT_TARGET: {
+    // step: 1 检查目标点状态
     if (!have_target_)
       return;
     else {
+      // step: 2 修改状态为 GEN_NEW_TRAJ
       changeFSMExecState(GEN_NEW_TRAJ, "FSM");
     }
     break;
   }
 
   case GEN_NEW_TRAJ: {
+    // step: 1 起点状态包含位置、速度、加速度、航向
     start_pt_ = odom_pos_;
     start_vel_ = odom_vel_;
     start_acc_.setZero();
@@ -179,18 +188,22 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
     start_yaw_(0) = atan2(rot_x(1), rot_x(0));
     start_yaw_(1) = start_yaw_(2) = 0.0;
 
+    // step: 2 调用规划器
     bool success = callKinodynamicReplan();
     if (success) {
+      // step: 2.1 成功修改状态 EXEC_TRAJ
       changeFSMExecState(EXEC_TRAJ, "FSM");
     } else {
       // have_target_ = false;
       // changeFSMExecState(WAIT_TARGET, "FSM");
+      // step: 2.2 失败修改状态 GEN_NEW_TRAJ
       changeFSMExecState(GEN_NEW_TRAJ, "FSM");
     }
     break;
   }
 
   case EXEC_TRAJ: {
+    // todo:
     /* determine if need to replan */
     LocalTrajData *info = &planner_manager_->local_data_;
     ros::Time time_now = ros::Time::now();
@@ -220,10 +233,12 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
   }
 
   case REPLAN_TRAJ: {
+    // step: 1 计算t_cur
     LocalTrajData *info = &planner_manager_->local_data_;
     ros::Time time_now = ros::Time::now();
     double t_cur = (time_now - info->start_time_).toSec();
 
+    // step: 2 计算起点状态
     start_pt_ = info->position_traj_.evaluateDeBoorT(t_cur);
     start_vel_ = info->velocity_traj_.evaluateDeBoorT(t_cur);
     start_acc_ = info->acceleration_traj_.evaluateDeBoorT(t_cur);
@@ -232,13 +247,17 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
     start_yaw_(1) = info->yawdot_traj_.evaluateDeBoorT(t_cur)[0];
     start_yaw_(2) = info->yawdotdot_traj_.evaluateDeBoorT(t_cur)[0];
 
+    // step: 3 发布重规划msg
     std_msgs::Empty replan_msg;
     replan_pub_.publish(replan_msg);
 
+    // step: 4 调用规划器
     bool success = callKinodynamicReplan();
     if (success) {
+      // step: 4.1 成功修改状态 EXEC_TRAJ
       changeFSMExecState(EXEC_TRAJ, "FSM");
     } else {
+      // step: 4.2 失败修改状态 GEN_NEW_TRAJ
       changeFSMExecState(GEN_NEW_TRAJ, "FSM");
     }
     break;
@@ -247,6 +266,7 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent &e) {
 }
 
 void KinoReplanFSM::checkCollisionCallback(const ros::TimerEvent &e) {
+  // step: 1 获取轨迹的local_data_
   LocalTrajData *info = &planner_manager_->local_data_;
 
   if (have_target_) {
@@ -329,11 +349,12 @@ void KinoReplanFSM::checkCollisionCallback(const ros::TimerEvent &e) {
 }
 
 bool KinoReplanFSM::callKinodynamicReplan() {
+  // step: 1 调用规划器
   bool plan_success = planner_manager_->kinodynamicReplan(
       start_pt_, start_vel_, start_acc_, end_pt_, end_vel_);
 
   if (plan_success) {
-
+    // step: 2 规划航向
     planner_manager_->planYaw(start_yaw_);
 
     auto info = &planner_manager_->local_data_;
